@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/billMe_UI/static/css/main.61599297.chunk.css",
-    "main.js": "/billMe_UI/static/js/main.15712a9b.chunk.js",
-    "main.js.map": "/billMe_UI/static/js/main.15712a9b.chunk.js.map",
-    "runtime-main.js": "/billMe_UI/static/js/runtime-main.95121edb.js",
-    "runtime-main.js.map": "/billMe_UI/static/js/runtime-main.95121edb.js.map",
-    "static/js/2.04023486.chunk.js": "/billMe_UI/static/js/2.04023486.chunk.js",
-    "static/js/2.04023486.chunk.js.map": "/billMe_UI/static/js/2.04023486.chunk.js.map",
-    "index.html": "/billMe_UI/index.html",
-    "static/css/main.61599297.chunk.css.map": "/billMe_UI/static/css/main.61599297.chunk.css.map",
-    "static/js/2.04023486.chunk.js.LICENSE.txt": "/billMe_UI/static/js/2.04023486.chunk.js.LICENSE.txt"
+    "main.css": "/BillMe_UI/static/css/main.61599297.chunk.css",
+    "main.js": "/BillMe_UI/static/js/main.15712a9b.chunk.js",
+    "main.js.map": "/BillMe_UI/static/js/main.15712a9b.chunk.js.map",
+    "runtime-main.js": "/BillMe_UI/static/js/runtime-main.86a710a1.js",
+    "runtime-main.js.map": "/BillMe_UI/static/js/runtime-main.86a710a1.js.map",
+    "static/js/2.04023486.chunk.js": "/BillMe_UI/static/js/2.04023486.chunk.js",
+    "static/js/2.04023486.chunk.js.map": "/BillMe_UI/static/js/2.04023486.chunk.js.map",
+    "index.html": "/BillMe_UI/index.html",
+    "static/css/main.61599297.chunk.css.map": "/BillMe_UI/static/css/main.61599297.chunk.css.map",
+    "static/js/2.04023486.chunk.js.LICENSE.txt": "/BillMe_UI/static/js/2.04023486.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.95121edb.js",
+    "static/js/runtime-main.86a710a1.js",
     "static/js/2.04023486.chunk.js",
     "static/css/main.61599297.chunk.css",
     "static/js/main.15712a9b.chunk.js"
