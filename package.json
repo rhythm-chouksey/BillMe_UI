@@ -30,13 +30,13 @@
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3"
   },
-  "homepage": "https://rhythm-chouksey.github.io/digital-invoice-app",
+  "homepage": "https://rhythm-chouksey.github.io/digital-invoice-app2",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rhythm-chouksey/digital-invoice-app.git"
+    "url": "git+https://github.com/rhythm-chouksey/digital-invoice-app2.git"
   },
   "bugs": {
-    "url": "https://github.com/rhythm-chouksey/digital-invoice-app/issues"
+    "url": "https://github.com/rhythm-chouksey/digital-invoice-app2/issues"
   },
   "browserslist": {
     "production": [

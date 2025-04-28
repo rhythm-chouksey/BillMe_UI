@@ -1,406 +1,356 @@
 import React, { useState } from "react";
-import axios from "axios";
 import "./DigitalInvoiceForm.css";
 
-function DigitalInvoiceForm() {
-  const defaultFormData = {
-    customerInfo: {
-      mobile: "7906059714",
-      name: "Aarav Rubral",
-      email: "customer_6383575597@example.com",
-      countryCode: "+91",
-      gstrName: "Ramandeep",
-      gstrMob: "9764775793",
-      gstrNo: "217686439898",
+// Paste your curl JSON here as initialFormData
+const initialFormData = {
+  sms: false,
+  email: false,
+  customerData: {
+    customerId: "ARTC235476",
+    phone: "8169089119",
+    email: "abhishek@billme.co.in",
+    firstName: "Abhishek",
+    lastName: "Gupta",
+    gender: "male",
+    dateOfBirth: "1996-04-20",
+    city: "mumbai",
+    state: "maharashtra",
+    profession: "Developer",
+    companyName: "BillMe",
+    maritalStatus: "married",
+    spouseFirstName: "Sonam",
+    spouseLastName: "Gupta",
+    anniversaryDate: "2021-05-28",
+    age: 25,
+    shippingAddress: "Marine Drive, Mumbai, Maharashtra",
+    shippingAddressCode: 400020
+  },
+  loyaltyData: {
+    type: "cashback",
+    cardNum: "V1218199412",
+    pointsEarned: 127,
+    walletAmount: 1500.0,
+    amountSaved: 50.0,
+    pointsRedeemed: 127
+  },
+  storeData: {
+    storeAddress: "Akshar Building, No. 40, Krishna Changa Naik Marg, Sector 46, Navi Mumbai, Maharashtra 400706",
+    pinCode: "400706",
+    displayAddress: "Sector 46a, Seawoods",
+    storeGstNumber: "RDE4672397RE251",
+    storeNumberPrimary: "+8080010101",
+    storeNumberSecondary: "+7070010101",
+    managerEmailId: "Kapil@billme.co.in",
+    managerName: "Kapil",
+    storeEmailId: "store@billme.co.in",
+    storeTiming: "9am - 12 pm",
+    storeBrandName: "BillMe"
+  },
+  companyData: {
+    name: "BillMe",
+    address: "11th Floor, Tower-1, Grand Central, Seawoods Station Rd, Navi Mumbai, Maharashtra 400706",
+    pinCode: "400706",
+    cin: "Z73204JA4004JTl035759",
+    phoneNumber: "9876543210",
+    helplineNumber: "022-242017"
+  },
+  transactionalData: {
+    clientId: "123454",
+    batchId: "09865",
+    roc: "876767",
+    txnId: "97785",
+    txnType: "",
+    invoiceType: "Tax Invoice",
+    invoiceNumber: "25329 002 0144147",
+    invoiceDate: 1619421892064,
+    orderNumber: "A376",
+    orderType: "cod",
+    cashierName: "Rupam Jain",
+    cashierId: "TED9586",
+    posNumber: "A312",
+    barCodeNum: "54632645271",
+    qrCodeNum: "ARE 635657647",
+    transactionType: "BM",
+    deliveryStatusUrl: "https://www.billme.co.in/"
+  },
+  paymentData: {
+    paymentMethods: [
+      { name: "Cash On Delivery", amount: 500.0 },
+      { name: "Airtel Wallet", amount: 350.0, bankTxnId: "9820550338" },
+      { name: "Fashalot", couponCode: "FASH-VYDSQ", amount: 1000.58 },
+      { name: "Coupon", couponCode: "DYGWRC12ADE", couponCodeValidity: "2022-12-12", amount: 400.0 },
+      { name: "Credit Note", paymentId: "487621856398465", amount: 100.0, remainAmount: 75.9, remainAmountValidity: "2022-12-12" }
+    ],
+    status: "paid"
+  },
+  productsData: [
+    {
+      name: "BLACK LOGO PRINT CREW NECK T-SHIRT",
+      description: "Premium t-shirt",
+      productCode: "A123",
+      quantity: 1,
+      unitAmount: 300.0,
+      totalAmount: 250.0,
+      hsnCode: "6276462",
+      discount: 50,
+      discountDescription: "11% off discount",
+      imageUrl: "https://assets.billme.co.in/public/images.jpeg",
+      taxes: {
+        sgstPercent: 6.0,
+        sgst: 8.0,
+        cgstPercent: 6.0,
+        cgst: 8.0,
+        igstPercent: 6.0,
+        igst: 8.0,
+        utgstPercent: 6.0,
+        utgst: 3.0
+      },
+      brand: "BigKart",
+      style: "3 Fold Premium Umbrella",
+      colour: "White",
+      size: "1meter",
+      subItems: [
+        {
+          name: "Raincoat",
+          description: "its best quality Raincoat",
+          productCode: "A999",
+          quantity: 1,
+          unitAmount: 300.0,
+          totalAmount: 324.0,
+          hsnCode: "6276213",
+          discount: 0,
+          taxes: {
+            sgstPercent: 6.0,
+            sgst: 8.0,
+            cgstPercent: 6.0,
+            cgst: 8.0,
+            igstPercent: 6.0,
+            igst: 8.0,
+            utgstPercent: 6.0,
+            utgst: 3.0
+          },
+          brand: "BigKart",
+          style: "3 Fold Raincoat",
+          colour: "White"
+        }
+      ]
     },
-    transactionInfo: {
-      clientId: "0",
-      batchId: "0",
-      roc: "0",
-      txnId: "0",
-      txnType: "UPI",
-    },
-    orderDetails: {
-      storeCode: "9991",
-      storeAddress: "Connaught Plaza Restaurants Pvt.Ltd.",
-      billingPOSNo: "101",
-      netPayableAmount: 13196,
-      subTotal: 11782.12,
-      rounding: 0,
-      taxesInfo: {
-        cgstPercent: 9,
-        sgstPercent: 9,
-        igstPercent: 9,
-        utgstPercent: 9,
+    {
+      name: "BLACK LOGO RISE WASHED GLENN SLIM FIT JEANS",
+      description: "BLACK LOGO RISE WASHED GLENN SLIM FIT JEANS",
+      productCode: "A124",
+      quantity: 2,
+      unitAmount: 700.0,
+      totalAmount: 1400.0,
+      hsnCode: "6276462",
+      discount: 0,
+      imageUrl: "https://assets.billme.co.in/public/images.jpeg",
+      taxes: {
+        sgstPercent: 6.0,
+        sgst: 8.0,
+        cgstPercent: 6.0,
+        cgst: 8.0,
+        igstPercent: 6.0,
+        igst: 8.0,
+        utgstPercent: 6.0,
+        utgst: 3.0
+      },
+      brand: "SELLCOM",
+      style: "Large",
+      colour: "Blue",
+      size: "Large"
+    }
+  ],
+  billAmountData: {
+    totalQty: 3,
+    deliveryCharges: 100.0,
+    codCharges: 0.0,
+    subTotal: 1650.0,
+    saleCurrency: "INR",
+    changeAmount: 0.0,
+    roundupAmount: 1650.0,
+    totalDiscountPercent: 0.0,
+    totalDiscount: 0.0,
+    netPayableAmount: 1750.0,
+    amountInWords: "Seventeen Hundred And Fifty Rupees Only"
+  },
+  taxesData: {
+    distributedTax: [
+      {
+        taxableAmount: 1650.0,
+        cgstPercent: 9.0,
+        sgstPercent: 9.0,
+        igstPercent: 9.0,
+        utgstPercent: 9.0,
         cgst: 148.5,
         sgst: 148.5,
         igst: 148.5,
-        utgst: 148.5,
-      },
-      payments: [
-        {
-          mode: "UPI",
-          total: 13196,
-          status: "SUCCESS",
-        },
-      ],
-      orderNo: "28",
-      orderRegNo: "1",
-      productsData: [
-        {
-          name: "BLACK LOGO PRINT CREW NECK T-SHIRT",
-          description: "Premium t-shirt",
-          productCode: "A123",
-          quantity: 1,
-          unitAmount: 300,
-          totalAmount: 250,
-          hsnCode: "6276462",
-          discount: 50,
-          taxes: {
-            sgstPercent: 6,
-            sgst: 8,
-            cgstPercent: 6,
-            cgst: 8,
-            igstPercent: 6,
-            igst: 8,
-            utgstPercent: 6,
-            utgst: 3,
-          },
-        },
-        {
-          name: "BLACK LOGO RISE WASHED GLENN SLIM FIT JEANS",
-          description: "BLACK LOGO RISE WASHED GLENN SLIM FIT JEANS",
-          productCode: "A124",
-          quantity: 2,
-          unitAmount: 700,
-          totalAmount: 1400,
-          hsnCode: "6276462",
-          discount: 0,
-          taxes: {
-            sgstPercent: 6,
-            sgst: 8,
-            cgstPercent: 6,
-            cgst: 8,
-            igstPercent: 6,
-            igst: 8,
-            utgstPercent: 6,
-            utgst: 3,
-          },
-        },
-      ],
-      purchasedPieces: 3,
-      invoiceNo: "5286",
-      barCode: "barcode_data",
-      loyaltyData: {
-        type: "cashback",
-        cardNum: "V1218199412",
-        pointsEarned: 127,
-        walletAmount: 1500,
-        amountSaved: 50,
-        pointsRedeemed: 127,
-      },
-      cashierId: "475117",
-      cashierName: "Krishna",
-      orderDateTime: "13-09-2024 17:20:51",
-    },
-    billFooterData: {
-      disclaimer: "disclaimer testing",
-      purchaseTerms: "https://company.co.in/",
-      feedbackCode: "LTE123",
-      feedbackDiscount: 0,
-      feedbackLink: "https://company.co.in/",
-      orderInstructions: "Please provide black Umbrella",
-      footerInfo: "GSTIN-27AAAFH1333H1ZT         \n         GST Classification -         \n    Restaurant Services SAC-996331    \n        FSSAI : 11517007000202        \n We value your feedback. Share it to: \n     myfeedback@mcdonaldsindia.com     \n # The collection of donation is done \n  on behalf of Ronald McDonald House  \nCharities Foundation India (RMHC India)\n  on a principal-to-principal basis.",
-    },
-  };
+        utgst: 148.5
+      }
+    ],
+    totalTax: 0.0,
+    totalTaxPercent: 0.0,
+    serviceTax: 0.0,
+    serviceTaxPercent: 0.0
+  },
+  billFooterData: {
+    disclaimer: "disclaimer testing",
+    purchaseTerms: "https://billme.co.in/",
+    feedbackCode: "LTE123",
+    feedbackDiscount: 0.0,
+    feedbackLink: "https://billme.co.in/",
+    orderInstructions: "Please provide black Umbrella"
+  }
+};
 
-  const [formData, setFormData] = useState(defaultFormData);
-  const [activeTab, setActiveTab] = useState("customerInfo");
-  const [popupMessage, setPopupMessage] = useState(null);
-  const [popupType, setPopupType] = useState("success"); // or "error"
-  const [loading, setLoading] = useState(false); // State to track loading
+function DigitalInvoiceForm() {
+  const [formData, setFormData] = useState(initialFormData);
+  const [activeTab, setActiveTab] = useState("customerData");
 
-  // Utility function to format field names
-  const formatFieldName = (fieldName) => {
-    return fieldName
-      .replace(/([A-Z])/g, " $1") // Add space before capital letters
-      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
-  };
+  // Helper for field labels
+  const formatFieldName = (name) =>
+    name.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase());
 
+  // Handle input changes
   const handleChange = (e, section, key, index = null, nestedKey = null) => {
-    const value = e.target.type === "number" ? Number(e.target.value) : e.target.value;
+    const value =
+      e.target.type === "number" || !isNaN(Number(e.target.value))
+        ? Number(e.target.value)
+        : e.target.value;
 
     setFormData((prev) => {
-      // Handle taxes inside productsData
-      if (nestedKey === "productsData.taxes" && index !== null) {
-        const products = [...prev.orderDetails.productsData];
-        const product = { ...products[index] };
-        product.taxes = { ...product.taxes, [key]: value };
-        products[index] = product;
+      if (section === "productsData") {
+        const products = [...prev.productsData];
+        if (nestedKey === "taxes") {
+          products[index].taxes[key] = value;
+        } else {
+          products[index][key] = value;
+        }
+        return { ...prev, productsData: products };
+      }
+      if (section === "paymentData" && nestedKey === "paymentMethods") {
+        const methods = [...prev.paymentData.paymentMethods];
+        methods[index][key] = value;
         return {
           ...prev,
-          orderDetails: {
-            ...prev.orderDetails,
-            productsData: products,
+          paymentData: {
+            ...prev.paymentData,
+            paymentMethods: methods,
           },
         };
       }
-
-      // Handle taxesInfo (order-level)
-      if (nestedKey === "taxesInfo") {
-        return {
-          ...prev,
-          orderDetails: {
-            ...prev.orderDetails,
-            taxesInfo: {
-              ...prev.orderDetails.taxesInfo,
-              [key]: value,
-            },
-          },
-        };
-      }
-
-      if (nestedKey === "loyaltyData") {
-        return {
-          ...prev,
-          orderDetails: {
-            ...prev.orderDetails,
-            loyaltyData: {
-              ...prev.orderDetails.loyaltyData,
-              [key]: value,
-            },
-          },
-        };
-      }
-
-      // Handle other product fields
-      if (nestedKey === "productsData" && index !== null) {
-        const products = [...prev.orderDetails.productsData];
-        products[index] = { ...products[index], [key]: value };
-        return {
-          ...prev,
-          orderDetails: {
-            ...prev.orderDetails,
-            productsData: products,
-          },
-        };
-      }
-
-      // Default handler for top-level fields
-      if (index !== null && nestedKey === "payments" && section === "orderDetails") {
-        const payments = [...prev.orderDetails.payments];
-        payments[index] = { ...payments[index], [key]: value };
-        return {
-          ...prev,
-          orderDetails: {
-            ...prev.orderDetails,
-            payments,
-          },
-        };
-      }
-
-      if (index !== null && section === "productsData") {
-        const products = [...prev.orderDetails.productsData];
-        products[index] = { ...products[index], [key]: value };
-        return {
-          ...prev,
-          orderDetails: {
-            ...prev.orderDetails,
-            productsData: products,
-          },
-        };
-      }
-
-      // Top-level fields
-      if (section in prev) {
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [key]: value,
-          },
-        };
-      }
-
-      return prev;
-    });
-  };
-
-  const handleAddProduct = () => {
-    const newProduct = {
-      name: "",
-      description: "",
-      productCode: "",
-      quantity: 0,
-      unitAmount: 0,
-      totalAmount: 0,
-      hsnCode: "",
-      discount: 0,
-      taxes: {
-        sgstPercent: 0,
-        sgst: 0,
-        cgstPercent: 0,
-        cgst: 0,
-        igstPercent: 0,
-        igst: 0,
-        utgstPercent: 0,
-        utgst: 0,
-      },
-    };
-    setFormData((prev) => ({
-      ...prev,
-      orderDetails: {
-        ...prev.orderDetails,
-        productsData: [...prev.orderDetails.productsData, newProduct],
-      },
-    }));
-  };
-
-  const handleDeleteProduct = (index) => {
-    setFormData((prev) => {
-      const updatedArray = [...prev.orderDetails.productsData];
-      updatedArray.splice(index, 1); // Remove the product at the given index
       return {
         ...prev,
-        orderDetails: {
-          ...prev.orderDetails,
-          productsData: updatedArray,
+        [section]: {
+          ...prev[section],
+          [key]: value,
         },
       };
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true); // Set loading to true when the API call starts
+  const handleDeleteProduct = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      productsData: prev.productsData.filter((_, i) => i !== index),
+    }));
+  };
 
-    // Clone the formData to avoid directly mutating the state
-    const payload = JSON.parse(JSON.stringify(formData)); // Deep clone to avoid mutation
-
-    // Helper function to recursively convert numeric fields to numbers
-    const convertToNumbers = (obj) => {
-      Object.keys(obj).forEach((key) => {
-        if (typeof obj[key] === "string" && !isNaN(obj[key])) {
-          obj[key] = Number(obj[key]); // Convert numeric strings to numbers
-        } else if (typeof obj[key] === "object" && obj[key] !== null) {
-          convertToNumbers(obj[key]); // Recursively handle nested objects
-        }
-      });
-    };
-
-    const convertToString = (value) => {
-      if (value === null || value === undefined) {
-        return ""; // Handle null or undefined values
-      }
-      return String(value); // Convert the value to a string
-    };
-
-    // Convert numeric fields in transactionInfo, orderDetails, and nested objects
-    convertToNumbers(payload.transactionInfo);
-    convertToNumbers(payload.orderDetails);
-    convertToString(payload.invoiceNo);
-    convertToString(payload.hsnCode);
-    convertToString(payload.orderNo);
-    convertToString(payload.orderRegNo);
-    convertToString(payload.billingPOSNo);
-    convertToString(payload.cashierId)
-    convertToString(payload.storeCode)
-    Object.keys(payload.transactionInfo).forEach((key) => {
-      payload.transactionInfo[key] = convertToString(payload.transactionInfo[key]);
-    });
-
-
-    const apiUrl =
-      "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
-
-    // Construct the headers
-    const headers = {
-      Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
-      "Content-Type": "application/json",
-      "correlation-id": "123455",
-    };
-
-    // Log the final curl command
-    const curlCommand = `
-curl --location '${apiUrl}' \\
---header 'Authorization: ${headers.Authorization}' \\
---header 'Content-Type: ${headers["Content-Type"]}' \\
---header 'correlation-id: ${headers["correlation-id"]}' \\
---data-raw '${JSON.stringify(payload, null, 2)}'
-    `;
-    console.log("Final CURL Command:\n", curlCommand);
-
-    try {
-      const response = await axios.post(apiUrl, payload, { headers });
-      setPopupType("success");
-      setPopupMessage("Invoice uploaded successfully!");
-      console.log("Response:", response.data);
-    } catch (error) {
-      setPopupType("error");
-      setPopupMessage(error.response?.data?.message || "API call failed!");
-      console.error("Error:", error.response?.data || error.message);
-    } finally {
-      setLoading(false); // Set loading to false when the API call completes
-    }
+  const handleAddProduct = () => {
+    setFormData((prev) => ({
+      ...prev,
+      productsData: [
+        ...prev.productsData,
+        {
+          name: "",
+          description: "",
+          productCode: "",
+          quantity: 0,
+          unitAmount: 0,
+          totalAmount: 0,
+          hsnCode: "",
+          discount: 0,
+          discountDescription: "",
+          imageUrl: "",
+          taxes: {
+            sgstPercent: 0,
+            sgst: 0,
+            cgstPercent: 0,
+            cgst: 0,
+            igstPercent: 0,
+            igst: 0,
+            utgstPercent: 0,
+            utgst: 0,
+          },
+          brand: "",
+          style: "",
+          colour: "",
+          size: "",
+          subItems: [],
+        },
+      ],
+    }));
   };
 
   const renderFields = (section) => {
     if (section === "productsData") {
       return (
-        <>
-          {formData.orderDetails.productsData &&
-            formData.orderDetails.productsData.map((product, index) => (
-              <div key={index} className="product-block">
-                <h3>Product {index + 1}</h3>
-                <div className="product-fields">
-                  {Object.keys(product).map((key) => {
-                    if (key === "taxes") {
-                      // Render Taxes block
-                      return (
-                        <div key={key} className="form-field">
-                          <h5>Taxes</h5>
-                          <div className="tax-info-block">
-                            {product.taxes &&
-                              Object.keys(product.taxes).map((taxKey) => (
-                                <div key={taxKey} className="form-field">
-                                  <label className="field-label">{formatFieldName(taxKey)}</label>
-                                  <input
-                                    type="number"
-                                    value={product.taxes[taxKey] || 0} // Default to 0 if undefined
-                                    onChange={(e) =>
-                                      handleChange(e, "orderDetails", taxKey, index, "productsData.taxes")
-                                    }
-                                    className="field-input"
-                                  />
-                                </div>
-                              ))}
-                          </div>
-                        </div>
-                      );
-                    }
+        <div>
+          {formData.productsData.map((product, idx) => (
+            <div className="product-block" key={idx}>
+              <h3>Product {idx + 1}</h3>
+              <div className="product-fields">
+                {Object.entries(product).map(([key, value]) => {
+                  if (key === "taxes") {
                     return (
-                      <div key={key} className="form-field">
-                        <label className="field-label">{formatFieldName(key)}</label>
-                        <input
-                          type="text"
-                          value={product[key] || ""} // Default to empty string if undefined
-                          onChange={(e) => handleChange(e, "orderDetails", key, index, "productsData")}
-                          className="field-input"
-                        />
+                      <div className="tax-info-block" key={key}>
+                        {Object.entries(value).map(([taxKey, taxValue]) => (
+                          <div className="form-field" key={taxKey}>
+                            <label className="field-label">{taxKey}</label>
+                            <input
+                              className="field-input"
+                              type="number"
+                              value={taxValue}
+                              onChange={(e) =>
+                                handleChange(e, "productsData", taxKey, idx, "taxes")
+                              }
+                            />
+                          </div>
+                        ))}
                       </div>
                     );
-                  })}
-                </div>
-                <button
-                  type="button"
-                  className="delete-product-button"
-                  onClick={() => handleDeleteProduct(index)}
-                >
-                  Delete
-                </button>
-                <hr className="product-separator" />
+                  }
+                  if (key === "subItems" && Array.isArray(value)) {
+                    // You can add subItem handling here if needed
+                    return null;
+                  }
+                  return (
+                    <div className="form-field" key={key}>
+                      <label className="field-label">{key}</label>
+                      <input
+                        className="field-input"
+                        type={typeof value === "number" ? "number" : "text"}
+                        value={value}
+                        onChange={(e) =>
+                          handleChange(e, "productsData", key, idx)
+                        }
+                      />
+                    </div>
+                  );
+                })}
               </div>
-            ))}
+              <button
+                type="button"
+                className="delete-product-button"
+                onClick={() => handleDeleteProduct(idx)}
+                disabled={formData.productsData.length === 1}
+                style={{ marginTop: "10px" }}
+              >
+                Remove
+              </button>
+              <hr className="product-separator" />
+            </div>
+          ))}
           <button
             type="button"
             className="add-product-button"
@@ -408,232 +358,169 @@ curl --location '${apiUrl}' \\
           >
             Add Product
           </button>
-        </>
+        </div>
       );
     }
 
-    if (section === "orderDetails") {
+    if (section === "paymentData") {
       return (
-        <>
-          <div className="form-field">
-            <h5>Order Details</h5>
-            <div className="order-details-block">
-              {/* Render all fields in Order Details */}
-              {Object.keys(formData[section]).map((key) => {
-                if (
-                  key === "productsData" ||
-                  key === "payments" ||
-                  key === "taxesInfo" ||
-                  key === "loyaltyData"
-                ) {
-                  // Skip rendering these keys for now; we'll handle them later
-                  return null;
-                }
-                if (key === "orderDateTime") {
-                  // Render Order Date Time with a date-time picker including seconds
-                  return (
-                    <div key={key} className="form-field">
-                      <label className="field-label">{formatFieldName(key)}</label>
-                      <input
-                        type="datetime-local"
-                        step="1" // Allows selection of seconds
-                        value={formData[section][key]}
-                        onChange={(e) => handleChange(e, section, key)}
-                        className="field-input"
-                      />
-                    </div>
-                  );
-                }
-                return (
-                  <div key={key} className="form-field">
-                    <label className="field-label">{formatFieldName(key)}</label>
-                    <input
-                      type="text"
-                      value={formData[section][key]}
-                      onChange={(e) => handleChange(e, section, key)}
-                      className="field-input"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Render Payments Section */}
-          {formData.orderDetails.payments && (
-            <div className="form-field">
-              <h5>Payments</h5>
-              {formData.orderDetails.payments.map((payment, index) => (
-                <div key={index} className="payment-block">
-                  <div className="form-field">
-                    <label className="field-label">Mode</label>
-                    <select
-                      value={payment.mode}
-                      onChange={(e) =>
-                        handleChange(e, "orderDetails", "mode", index, "payments")
-                      }
-                      className="field-input"
-                    >
-                      <option value="UPI">UPI</option>
-                      <option value="CARD">CARD</option>
-                      <option value="CASH">CASH</option>
-                    </select>
-                  </div>
-                  <div className="form-field">
-                    <label className="field-label">Total</label>
-                    <input
-                      type="number"
-                      value={payment.total}
-                      onChange={(e) =>
-                        handleChange(e, "orderDetails", "total", index, "payments")
-                      }
-                      className="field-input"
-                    />
-                  </div>
-                  <div className="form-field">
-                    <label className="field-label">Status</label>
-                    <input
-                      type="text"
-                      value={payment.status}
-                      onChange={(e) =>
-                        handleChange(e, "orderDetails", "status", index, "payments")
-                      }
-                      className="field-input"
-                    />
-                  </div>
+        <div>
+          <h5>Payment Methods</h5>
+          {formData.paymentData.paymentMethods.map((method, idx) => (
+            <div className="payment-block" key={idx}>
+              {Object.entries(method).map(([key, value]) => (
+                <div className="form-field" key={key}>
+                  <label className="field-label">{formatFieldName(key)}</label>
+                  <input
+                    className="field-input"
+                    type={typeof value === "number" ? "number" : "text"}
+                    value={value}
+                    onChange={(e) =>
+                      handleChange(e, "paymentData", key, idx, "paymentMethods")
+                    }
+                  />
                 </div>
               ))}
             </div>
-          )}
-
-          {/* Render Taxes Info Section */}
-          {formData.orderDetails.taxesInfo && (
-            <div className="form-field">
-              <h5>Taxes Info</h5>
-              <div className="tax-info-block">
-                {Object.keys(formData.orderDetails.taxesInfo).map((taxKey) => (
-                  <div key={taxKey} className="form-field">
-                    <label className="field-label">{formatFieldName(taxKey)}</label>
-                    <input
-                      type="number" // Ensure numeric input
-                      value={formData.orderDetails.taxesInfo[taxKey] || ""} // Ensure value is a number
-                      onChange={(e) =>
-                        handleChange(e, "orderDetails", taxKey, null, "taxesInfo")
-                      }
-                      className="field-input"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Render Loyalty Data Section */}
-          {formData.orderDetails.loyaltyData && (
-            <div className="form-field">
-              <h5>Loyalty Data</h5>
-              <div className="loyalty-data-block">
-                {Object.keys(formData.orderDetails.loyaltyData).map((loyaltyKey) => (
-                  <div key={loyaltyKey} className="form-field">
-                    <label className="field-label">{formatFieldName(loyaltyKey)}</label>
-                    <input
-                      type="text"
-                      value={formData.orderDetails.loyaltyData[loyaltyKey]}
-                      onChange={(e) =>
-                        handleChange(e, "orderDetails", loyaltyKey, null, "loyaltyData")
-                      }
-                      className="field-input"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </>
+          ))}
+          <button
+            type="button"
+            className="add-product-button"
+            onClick={() =>
+              setFormData((prev) => ({
+                ...prev,
+                paymentData: {
+                  ...prev.paymentData,
+                  paymentMethods: [
+                    ...prev.paymentData.paymentMethods,
+                    { name: "", amount: 0 },
+                  ],
+                },
+              }))
+            }
+          >
+            Add Payment Method
+          </button>
+        </div>
       );
     }
 
-    return Object.keys(formData[section]).map((key) => (
-      <div key={key} className="form-field">
-        <label className="field-label">{formatFieldName(key)}</label>
-        <input
-          type="text"
-          value={formData[section][key]}
-          onChange={(e) => handleChange(e, section, key)}
-          className="field-input"
-        />
+    // Loyalty Data block styling
+    if (section === "loyaltyData") {
+      return (
+        <div className="loyalty-data-block">
+          {Object.entries(formData.loyaltyData).map(([key, value]) => (
+            <div className="form-field" key={key}>
+              <label className="field-label">{formatFieldName(key)}</label>
+              <input
+                className="field-input"
+                type={typeof value === "number" ? "number" : "text"}
+                value={value}
+                onChange={(e) => handleChange(e, "loyaltyData", key)}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // Taxes Data block styling
+    if (section === "taxesData") {
+      // Exclude distributedTax from UI, only show other fields
+      const { distributedTax, ...otherTaxFields } = formData.taxesData;
+      return (
+        <div className="order-details-block">
+          {Object.entries(otherTaxFields).map(([key, value]) => (
+            <div className="form-field" key={key}>
+              <label className="field-label">{formatFieldName(key)}</label>
+              <input
+                className="field-input"
+                type={typeof value === "number" ? "number" : "text"}
+                value={value}
+                onChange={(e) => handleChange(e, "taxesData", key)}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // Default: render all fields in a grid
+    return (
+      <div className="order-details-block">
+        {Object.entries(formData[section]).map(([key, value]) => (
+          <div className="form-field" key={key}>
+            <label className="field-label">{formatFieldName(key)}</label>
+            <input
+              className="field-input"
+              type={typeof value === "number" ? "number" : "text"}
+              value={value}
+              onChange={(e) => handleChange(e, section, key)}
+            />
+          </div>
+        ))}
       </div>
-    ));
+    );
+  };
+
+  // Add this function inside your component
+  const logCurlCommand = (data) => {
+    const curl = [
+      "curl --location 'https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v1/create' \\",
+      "--header 'Content-Type: application/json' \\",
+      "--header 'store-code: ABC345' \\",
+      "--header 'authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEzMDIwMjYsImlhdCI6MTc0NTc1MDAyNiwianRpIjoiZGYwNDhmNGEtNzkyZS00Y2IxLTgxZDItYzYxN2NkZWE5NDY1IiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjY5LjQ4LjIzNi43MyIsImV4dElkIjoiMjAxNSIsIk1lcmNoYW50SWQiOiIyMDE1IiwiY2xpZW50QWRkcmVzcyI6IjY5LjQ4LjIzNi43MyIsImNsaWVudF9pZCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSJ9.FGNPd4LTsUfw5SPm8z_mYNarkrS0HBZpZ75GDZInvCLkDrn12Rs-KuXB3fykfqcVgBg9rREs1nyXiciJ4Cx0FQ' \\",
+      `--data-raw '${JSON.stringify(data, null, 2)}'`
+    ].join('\n');
+    console.log("cURL command to be sent:\n" + curl);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Always set distributedTax to the default value from initialFormData
+    const dataToSend = {
+      ...formData,
+      taxesData: {
+        ...formData.taxesData,
+        distributedTax: initialFormData.taxesData.distributedTax,
+      },
+    };
+    logCurlCommand(dataToSend); // Log cURL before posting
+    alert("Form submitted! (See console for data and cURL)");
+    // ...your API call here...
   };
 
   return (
-    <div className="form-container">
-      <h1 className="form-title">Digital Invoice Form</h1>
-      <div className={`tabs ${popupMessage ? "popup-active" : ""}`}>
-        <button
-          className={`tab-button ${activeTab === "customerInfo" ? "active" : ""}`}
-          onClick={() => setActiveTab("customerInfo")}
-        >
-          Customer Info
-        </button>
-        <button
-          className={`tab-button ${activeTab === "transactionInfo" ? "active" : ""}`}
-          onClick={() => setActiveTab("transactionInfo")}
-        >
-          Transaction Info
-        </button>
-        <button
-          className={`tab-button ${activeTab === "orderDetails" ? "active" : ""}`}
-          onClick={() => setActiveTab("orderDetails")}
-        >
-          Order Info
-        </button>
-        <button
-          className={`tab-button ${activeTab === "productsData" ? "active" : ""}`}
-          onClick={() => setActiveTab("productsData")}
-        >
-          Product Info
-        </button>
-        <button
-          className={`tab-button ${activeTab === "billFooterData" ? "active" : ""}`}
-          onClick={() => setActiveTab("billFooterData")}
-        >
-          Bill Footer Info
-        </button>
+    <form className="form-container" onSubmit={handleSubmit}>
+      <div className="form-title">BillMe Adapter UI</div>
+      <div className="tabs">
+        {[
+          { key: "customerData", label: "Customer Info" },
+          { key: "storeData", label: "Store Info" },
+          { key: "companyData", label: "Company Info" },
+          { key: "transactionalData", label: "Transactional Info" },
+          { key: "loyaltyData", label: "Loyalty Info" },
+          { key: "paymentData", label: "Payment Info" },
+          { key: "productsData", label: "Products Info" },
+          { key: "billAmountData", label: "Bill Amount Info" },
+          { key: "taxesData", label: "Taxes Info" },
+          { key: "billFooterData", label: "Bill Footer Info" },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            className={`tab-button${activeTab === tab.key ? " active" : ""}`}
+            onClick={() => setActiveTab(tab.key)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
-      <form onSubmit={handleSubmit} className={`form ${popupMessage ? "popup-active" : ""}`}>
-        {activeTab === "customerInfo" && (
-          <div className="form-section">{renderFields("customerInfo")}</div>
-        )}
-        {activeTab === "transactionInfo" && (
-          <div className="form-section">{renderFields("transactionInfo")}</div>
-        )}
-        {activeTab === "orderDetails" && (
-          <div className="form-section">{renderFields("orderDetails")}</div>
-        )}
-        {activeTab === "productsData" && (
-          <div className="form-section">{renderFields("productsData")}</div>
-        )}
-        {activeTab === "billFooterData" && (
-          <div className="form-section">{renderFields("billFooterData")}</div>
-        )}
-        <button type="submit" className="submit-button">
-          Submit
-        </button>
-      </form>
-      {loading && (
-  <div className="loading-toast">
-    <div className="spinner"></div>
-  </div>
-)}
-      {popupMessage && (
-        <div className={`popup ${popupType}`}>
-          <h3>{popupType === "success" ? "Success" : "Error"}</h3>
-          <p>{popupMessage}</p>
-          <button onClick={() => setPopupMessage(null)}>Close</button>
-        </div>
-      )}
-    </div>
+      <div className="tab-content">{renderFields(activeTab)}</div>
+      <button type="submit" className="submit-button">
+        Submit
+      </button>
+    </form>
   );
 }
 
