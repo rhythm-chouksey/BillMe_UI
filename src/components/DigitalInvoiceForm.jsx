@@ -524,6 +524,11 @@ curl --location '${apiUrl}' \\
 
   return (
     <>
+      {loading && (
+        <div className="loading-toast">
+          <div className="spinner"></div>
+        </div>
+      )}
       {popupMessage && (
         <div className={`popup ${popupType}`}>
           <h3>{popupType === "success" ? "Success" : "Error"}</h3>
