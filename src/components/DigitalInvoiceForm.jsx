@@ -207,7 +207,9 @@ const initialFormData = {
 function DigitalInvoiceForm() {
   const [formData, setFormData] = useState(initialFormData);
   const [activeTab, setActiveTab] = useState("customerData");
-  const [loading, setLoading] = useState(false); // <-- Add this line
+  const [loading, setLoading] = useState(false);
+  const [popupMessage, setPopupMessage] = useState(null); // <-- Add this
+  const [popupType, setPopupType] = useState("success");  // <-- Add this
 
   // Helper for field labels
   const formatFieldName = (name) =>
@@ -508,50 +510,58 @@ curl --location '${apiUrl}' \\
 
     try {
       const response = await axios.post(apiUrl, payload, { headers });
-      setPopupType && setPopupType("success");
-      setPopupMessage && setPopupMessage("Invoice uploaded successfully!");
+      setPopupType("success");
+      setPopupMessage("Invoice uploaded successfully!");
       console.log("Response:", response.data);
     } catch (error) {
-      setPopupType && setPopupType("error");
-      setPopupMessage &&
-        setPopupMessage(error.response?.data?.message || "API call failed!");
+      setPopupType("error");
+      setPopupMessage(error.response?.data?.message || "API call failed!");
       console.error("Error:", error.response?.data || error.message);
     } finally {
-      setLoading && setLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <form className="form-container" onSubmit={handleSubmit}>
-      <div className="form-title">BillMe Adapter UI</div>
-      <div className="tabs">
-        {[
-          { key: "customerData", label: "Customer Info" },
-          { key: "storeData", label: "Store Info" },
-          { key: "companyData", label: "Company Info" },
-          { key: "transactionalData", label: "Transactional Info" },
-          { key: "loyaltyData", label: "Loyalty Info" },
-          { key: "paymentData", label: "Payment Info" },
-          { key: "productsData", label: "Products Info" },
-          { key: "billAmountData", label: "Bill Amount Info" },
-          { key: "taxesData", label: "Taxes Info" },
-          { key: "billFooterData", label: "Bill Footer Info" },
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            className={`tab-button${activeTab === tab.key ? " active" : ""}`}
-            onClick={() => setActiveTab(tab.key)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-      <div className="tab-content">{renderFields(activeTab)}</div>
-      <button type="submit" className="submit-button">
-        Submit
-      </button>
-    </form>
+    <>
+      {popupMessage && (
+        <div className={`popup ${popupType}`}>
+          <h3>{popupType === "success" ? "Success" : "Error"}</h3>
+          <p>{popupMessage}</p>
+          <button onClick={() => setPopupMessage(null)}>Close</button>
+        </div>
+      )}
+      <form className={`form-container${popupMessage ? " popup-active" : ""}`} onSubmit={handleSubmit}>
+        <div className="form-title">BillMe Adapter UI</div>
+        <div className="tabs">
+          {[
+            { key: "customerData", label: "Customer Info" },
+            { key: "storeData", label: "Store Info" },
+            { key: "companyData", label: "Company Info" },
+            { key: "transactionalData", label: "Transactional Info" },
+            { key: "loyaltyData", label: "Loyalty Info" },
+            { key: "paymentData", label: "Payment Info" },
+            { key: "productsData", label: "Products Info" },
+            { key: "billAmountData", label: "Bill Amount Info" },
+            { key: "taxesData", label: "Taxes Info" },
+            { key: "billFooterData", label: "Bill Footer Info" },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              className={`tab-button${activeTab === tab.key ? " active" : ""}`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="tab-content">{renderFields(activeTab)}</div>
+        <button type="submit" className="submit-button">
+          Submit
+        </button>
+      </form>
+    </>
   );
 }
 

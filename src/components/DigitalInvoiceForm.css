@@ -366,45 +366,44 @@ body {
 /* Popup Styling */
 .popup {
     position: fixed;
-    top: 50%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: var(--form-background);
-    border: 1px solid var(--border-color);
-    border-radius: 12px; /* Increased border radius for a modern look */
-    padding: 30px; /* Increased padding for a larger popup */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow for emphasis */
-    z-index: 1000;
+    background: #fff;
+    border: 2px solid;
+    border-radius: 12px;
+    padding: 32px 40px;
+    z-index: 1001;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    min-width: 320px;
     text-align: center;
-    width: 400px; /* Increased width */
-    max-width: 90%; /* Ensure it fits smaller screens */
 }
 
 .popup.success {
-    border-color: #4caf50; /* Green border for success */
-    color: #4caf50; /* Green text for success */
+    border-color: #4caf50;
+    color: #4caf50;
 }
 
 .popup.error {
-    border-color: #f44336; /* Red border for error */
-    color: #f44336; /* Red text for error */
+    border-color: #f44336;
+    color: #f44336;
 }
 
 .popup h3 {
     margin-bottom: 15px;
-    font-size: 22px; /* Larger font size for the title */
+    font-size: 22px;
     font-weight: bold;
 }
 
 .popup p {
-    font-size: 16px; /* Larger font size for the message */
+    font-size: 16px;
     color: var(--text-color);
 }
 
 .popup button {
     margin-top: 20px;
     padding: 10px 15px;
-    background-color: var(--primary-color);
+    background-color: var(--primary-color, #1976d2);
     color: white;
     border: none;
     border-radius: 8px;
@@ -413,13 +412,12 @@ body {
 }
 
 .popup button:hover {
-    background-color: var(--primary-hover-color);
+    background-color: var(--primary-hover-color, #1565c0);
 }
 
-/* Blur Background When Popup is Active */
 .popup-active {
-    filter: blur(5px); /* Apply blur effect */
-    pointer-events: none; /* Disable interactions with the background */
+    filter: blur(5px);
+    pointer-events: none;
 }
 
 /* Input Container Styling */
