@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "./DigitalInvoiceForm.css";
 
 // Paste your curl JSON here as initialFormData
@@ -206,6 +207,7 @@ const initialFormData = {
 function DigitalInvoiceForm() {
   const [formData, setFormData] = useState(initialFormData);
   const [activeTab, setActiveTab] = useState("customerData");
+  const [loading, setLoading] = useState(false); // <-- Add this line
 
   // Helper for field labels
   const formatFieldName = (name) =>
@@ -463,31 +465,60 @@ function DigitalInvoiceForm() {
     );
   };
 
-  // Add this function inside your component
-  const logCurlCommand = (data) => {
-    const curl = [
-      "curl --location 'https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v1/create' \\",
-      "--header 'Content-Type: application/json' \\",
-      "--header 'store-code: ABC345' \\",
-      "--header 'authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEzMDIwMjYsImlhdCI6MTc0NTc1MDAyNiwianRpIjoiZGYwNDhmNGEtNzkyZS00Y2IxLTgxZDItYzYxN2NkZWE5NDY1IiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjY5LjQ4LjIzNi43MyIsImV4dElkIjoiMjAxNSIsIk1lcmNoYW50SWQiOiIyMDE1IiwiY2xpZW50QWRkcmVzcyI6IjY5LjQ4LjIzNi43MyIsImNsaWVudF9pZCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSJ9.FGNPd4LTsUfw5SPm8z_mYNarkrS0HBZpZ75GDZInvCLkDrn12Rs-KuXB3fykfqcVgBg9rREs1nyXiciJ4Cx0FQ' \\",
-      `--data-raw '${JSON.stringify(data, null, 2)}'`
-    ].join('\n');
-    console.log("cURL command to be sent:\n" + curl);
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Always set distributedTax to the default value from initialFormData
-    const dataToSend = {
-      ...formData,
-      taxesData: {
-        ...formData.taxesData,
-        distributedTax: initialFormData.taxesData.distributedTax,
-      },
+    setLoading(true);
+
+    // Deep clone to avoid mutation
+    const payload = JSON.parse(JSON.stringify(formData));
+
+    // Helper: recursively convert numeric strings to numbers
+    const convertToNumbers = (obj) => {
+      Object.keys(obj).forEach((key) => {
+        if (typeof obj[key] === "string" && !isNaN(obj[key]) && obj[key] !== "") {
+          obj[key] = Number(obj[key]);
+        } else if (typeof obj[key] === "object" && obj[key] !== null) {
+          convertToNumbers(obj[key]);
+        }
+      });
     };
-    logCurlCommand(dataToSend); // Log cURL before posting
-    alert("Form submitted! (See console for data and cURL)");
-    // ...your API call here...
+
+    convertToNumbers(payload);
+
+    const apiUrl =
+      "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v1/create";
+
+    const headers = {
+      Authorization:
+        "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
+      "Content-Type": "application/json",
+      "store-code": "ABC345",
+      "correlation-id":"Rhythm"
+    };
+
+    // Log cURL for debugging
+    const curlCommand = `
+curl --location '${apiUrl}' \\
+--header 'Authorization: ${headers.Authorization}' \\
+--header 'Content-Type: ${headers["Content-Type"]}' \\
+--header 'store-code: ${headers["store-code"]}' \\
+--data-raw '${JSON.stringify(payload, null, 2)}'
+    `;
+    console.log("Final CURL Command:\n", curlCommand);
+
+    try {
+      const response = await axios.post(apiUrl, payload, { headers });
+      setPopupType && setPopupType("success");
+      setPopupMessage && setPopupMessage("Invoice uploaded successfully!");
+      console.log("Response:", response.data);
+    } catch (error) {
+      setPopupType && setPopupType("error");
+      setPopupMessage &&
+        setPopupMessage(error.response?.data?.message || "API call failed!");
+      console.error("Error:", error.response?.data || error.message);
+    } finally {
+      setLoading && setLoading(false);
+    }
   };
 
   return (
